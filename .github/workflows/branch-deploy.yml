@@ -1,0 +1,55 @@
+name: "branch deploy demo"
+
+on:
+  issue_comment:
+    types: [created]
+
+permissions:
+  pull-requests: write
+  deployments: write
+  id-token: write
+  contents: write
+  checks: read
+  statuses: read
+
+jobs:
+  deploy-check:
+    if: ${{ github.event.issue.pull_request }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run branch-deploy
+        uses: github/branch-deploy@v10.3.1
+        id: branch-deploy
+        with:
+          trigger: ".deploy"
+          environment: "dev"  # default fallback
+          environment_targets: "dev,stage"
+          checks: "required"
+          skip_completing: true
+
+    outputs:
+      continue: ${{ steps.branch-deploy.outputs.continue }}
+      environment: ${{ steps.branch-deploy.outputs.environment }}
+      sha: ${{ steps.branch-deploy.outputs.sha }}
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: deploy-check
+    if: ${{ needs.deploy-check.outputs.continue == 'true' }}
+    environment: dummy-secrets  # secrets come from here
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.deploy-check.outputs.sha }}
+
+      - name: Debug environment name
+        run: echo "Target environment:${{ needs.deploy-check.outputs.environment }}"
+
+      - name: Use secret from dummy-secrets
+        run: echo "Loaded secret is:$TEST_SECRET"
+        env:
+          TEST_SECRET: ${{ secrets.TEST_SECRET }}
+
+      - name: Simulate deployment
+        run: echo "Simulating deployment to ${{ needs.deploy-check.outputs.environment }} 🎯"
