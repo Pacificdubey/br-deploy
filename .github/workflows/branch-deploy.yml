@@ -42,6 +42,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ github.head_ref }}  # Ensures the feature branch from the PR is checked out
+      - name: Debug
+        run : |
+          cd terraform
+          ls -la
 
       - name: Debug environment name
         run: echo "Target environment:${{ needs.deploy-check.outputs.environment }}"
