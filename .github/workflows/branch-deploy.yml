@@ -38,14 +38,11 @@ jobs:
     if: ${{ needs.deploy-check.outputs.continue == 'true' }}
     environment: dummy-secrets  # secrets come from here
     steps:
-      - name: Checkout code
+      - name: Checkout feature branch code (PR source branch)
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.deploy-check.outputs.sha }}
-          
-      - name: debug
-        run: |
-          cat hello.yml
+          ref: ${{ github.head_ref }}  # Ensures the feature branch from the PR is checked out
+
       - name: Debug environment name
         run: echo "Target environment:${{ needs.deploy-check.outputs.environment }}"
 
@@ -56,3 +53,8 @@ jobs:
 
       - name: Simulate deployment
         run: echo "Simulating deployment to ${{ needs.deploy-check.outputs.environment }} 🎯"
+
+      - name: Debug Feature Branch (check hello.yml)
+        run: |
+          echo "Checking feature branch content..."
+          cat hello.yml  # Ensure this file exists in your feature branch
