@@ -41,7 +41,7 @@ jobs:
       - name: Checkout feature branch code (PR source branch)
         uses: actions/checkout@v4
         with:
-          ref: ${{ needs.deploy-check.outputs.ref }}
+          ref: ${{ needs.deploy-check.outputs.sha }}
       - name: Debug
         run : |
           cd terraform
