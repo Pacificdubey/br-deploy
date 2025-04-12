@@ -42,7 +42,10 @@ jobs:
         uses: actions/checkout@v4
         with:
           ref: ${{ needs.deploy-check.outputs.sha }}
-
+          
+      - name: debug
+        run: |
+          cat hello.yml
       - name: Debug environment name
         run: echo "Target environment:${{ needs.deploy-check.outputs.environment }}"
 
