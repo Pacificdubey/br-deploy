@@ -41,7 +41,7 @@ jobs:
       - name: Checkout feature branch code (PR source branch)
         uses: actions/checkout@v4
         with:
-          ref: ${{ github.event.pull_request.head.ref }}
+          ref: ${{ jobs.deploy-check.outputs.ref }}
       - name: Debug
         run : |
           cd terraform
