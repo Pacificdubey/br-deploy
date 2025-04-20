@@ -48,7 +48,7 @@ jobs:
           ls -la
 
       - name: Debug environment name
-        run: echo "Target environment:${{ needs.deploy-check.outputs.environment }}"
+        run: echo "Target environment:${{ needs.deploy-check.environment }}"
 
       - name: Use secret from dummy-secrets
         run: echo "Loaded secret is:$TEST_SECRET"
